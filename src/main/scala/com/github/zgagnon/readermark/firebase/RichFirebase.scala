@@ -16,6 +16,6 @@ class RichFirebase(firebase: Firebase){
     }
 
     firebase.addValueEventListener(listener)
-    prom
+    prom.future
   }
 }

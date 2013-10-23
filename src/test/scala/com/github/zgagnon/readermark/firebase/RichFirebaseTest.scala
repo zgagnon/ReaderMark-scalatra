@@ -3,11 +3,10 @@ package com.github.zgagnon.readermark.firebase
 import org.specs2.mutable.Specification
 import org.specs2.mock.Mockito
 import com.firebase.client.{ValueEventListener, DataSnapshot, Firebase}
-import scala.concurrent.{Await, Promise}
-import scala.util.{Success, Random}
-import org.specs2.mock.mockito.CapturedArgument
-import org.mockito.ArgumentCaptor
-import scala.concurrent.duration.Duration
+import scala.concurrent.{Future, Await, Promise}
+import scala.util.Random
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 
 class RichFirebaseTest extends Specification with Mockito {
   "The RichFirebase" should {
@@ -19,29 +18,26 @@ class RichFirebaseTest extends Specification with Mockito {
       there was one(firebase).addValueEventListener(any[ValueEventListener])
     }
 
-    "return a promise for the type of the callback" in {
+    "return a future for the type of the callback" in {
       val firebase = mock[Firebase]
       val prom = new RichFirebase(firebase) onValueChange {
         (p1: DataSnapshot) => "test"
       }
-      prom must beAnInstanceOf[Promise[String]]
+      prom must beAnInstanceOf[Future[String]]
     }
 
-    "return a promise for the value of the callback" in {
+    "return a future for the value of the callback" in {
       val firebase = mock[Firebase]
       val result = randomString(20)
-      val prom = new RichFirebase(firebase) onValueChange {
+      val future:Future[String] = new RichFirebase(firebase) onValueChange {
         (p1: DataSnapshot) => result
       }
 
       val listener = capture[ValueEventListener]
       there was one(firebase).addValueEventListener(listener.capture)
       listener.value.onDataChange(mock[DataSnapshot])
-      val callback = Await.ready(prom.future, Duration(10, "seconds"))
-      callback.value match {
-        case Some(Success(string)) => string must be(result)
-        case None => ko
-      }
+      val value: String = Await.result(future, 10 nanoseconds)
+      value must be(result)
     }
   }
 
