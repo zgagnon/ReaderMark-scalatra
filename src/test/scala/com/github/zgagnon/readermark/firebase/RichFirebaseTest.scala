@@ -7,8 +7,9 @@ import scala.concurrent.{Future, Await, Promise}
 import scala.util.Random
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+import org.specs2.ScalaCheck
 
-class RichFirebaseTest extends Specification with Mockito {
+class RichFirebaseTest extends Specification with Mockito with ScalaCheck {
   "The RichFirebase" should {
     "take a function for value change and set it as a ValueEventListener" in {
       val firebase = mock[Firebase]
@@ -27,17 +28,21 @@ class RichFirebaseTest extends Specification with Mockito {
     }
 
     "return a future for the value of the callback" in {
-      val firebase = mock[Firebase]
-      val result = randomString(20)
-      val future:Future[String] = new RichFirebase(firebase) onValueChange {
-        (p1: DataSnapshot) => result
+      check {
+        (result: String) =>
+          val firebase = mock[Firebase]
+          val result = randomString(20)
+          val future: Future[String] = new RichFirebase(firebase) onValueChange {
+            (p1: DataSnapshot) => result
+          }
+
+          val listener = capture[ValueEventListener]
+          there was one(firebase).addValueEventListener(listener.capture)
+          listener.value.onDataChange(mock[DataSnapshot])
+          val value: String = Await.result(future, 10 nanoseconds)
+          value must be(result)
       }
 
-      val listener = capture[ValueEventListener]
-      there was one(firebase).addValueEventListener(listener.capture)
-      listener.value.onDataChange(mock[DataSnapshot])
-      val value: String = Await.result(future, 10 nanoseconds)
-      value must be(result)
     }
   }
 

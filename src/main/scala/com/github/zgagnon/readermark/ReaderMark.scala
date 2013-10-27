@@ -1,9 +1,6 @@
 package com.github.zgagnon.readermark
 
 
-import com.firebase.client.{ValueEventListener, DataSnapshot, Firebase}
-import scala.concurrent.promise
-
 class ReaderMark extends ReadermarkScalatraStack {
 
   private val firebaseURL = "https://readmark.firebaseio.com/"
@@ -20,14 +17,7 @@ class ReaderMark extends ReadermarkScalatraStack {
   }
 
   get("/next") {
-//    val firebase = new Firebase(firebaseURL + "/feeds")
-//    val prom = promise[DataSnapshot]()
-//    firebase.addListenerForSingleValueEvent(new ValueEventListener() {
-//      def onDataChange(p1: DataSnapshot) = prom.success(p1)
-//
-//      def onCancelled() = prom.failure(new InterruptedException)
-//    })
-//    prom.future.map()
+
   }
 
 }
