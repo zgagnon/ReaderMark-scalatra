@@ -1,0 +1,16 @@
+config defaultToCurrentScreen true
+config windowHintsShowIcons true
+config windowHintsSpread true
+
+#bind tab:cmd switch
+
+layout one-monitor BEFORE:REPEAT hide all-but 'Intellij IDEA'
+layout one-monitor 'IntelliJ IDEA' corner top-left | resize screenSizeX screenSizeY
+
+default one-monitor count:1
+default two-monitor count:2
+
+bind 1:ctrl sequence shell '/usr/local/binl/growlnotify -m "Slate is now restarting" "Slate Relaunch"' | relaunch
+bind 2:cmd toggle 'Intellij IDEA', 'Google Chrome'
+bind f:cmd hint asdfghjkl;
+bind esc:ctrl grid

@@ -1,10 +1,14 @@
 package com.github.zgagnon.readermark
 
+import org.scalatra.ActionResult._
+import org.scalatra.TemporaryRedirect
+import com.github.zgagnon.readermark.firebase.FirebaseLike
+import com.firebase.client.Firebase
 
 class ReaderMark extends ReadermarkScalatraStack {
 
   private val firebaseURL = "https://readmark.firebaseio.com/"
-
+  implicit val firebase = new Firebase(firebaseURL) with FirebaseLike
   get("/") {
     <html>
       <body>
@@ -17,7 +21,7 @@ class ReaderMark extends ReadermarkScalatraStack {
   }
 
   get("/next") {
-
+    val feeds = Feeds()
+    TemporaryRedirect(feeds.next)
   }
-
 }

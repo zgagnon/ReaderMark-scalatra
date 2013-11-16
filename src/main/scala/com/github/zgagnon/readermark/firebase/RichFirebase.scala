@@ -4,7 +4,7 @@ import com.firebase.client.{ValueEventListener, DataSnapshot, Firebase}
 import scala.concurrent.Promise
 import scala.util.Try
 
-class RichFirebase(firebase: Firebase){
+class RichFirebase(firebase: FirebaseLike){
   def onValueChange[T](callback: (DataSnapshot => T)) = {
     val prom = Promise[T]
     val listener = new ValueEventListener() {
